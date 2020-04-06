@@ -35,8 +35,10 @@ app.use(upload());
         let stAge = req.body.age;
         let stClass = req.body.class;
         let studentInfo = fs.writeFileSync(filePath, ` Student Info: NAME: ${stName} AGE: ${stAge} CLASS: ${stClass}`);
-        console.log(`Student Info: NAME: ${stName} AGE: ${stAge} CLASS: ${stClass}`)
-       
+        console.log(`Student ""Info: NAME: ${stName} AGE: ${stAge} CLASS: ${stClass}`)
+       res.end(`new student created
+       Student Info:
+       { NAME: ${stName} AGE: ${stAge} CLASS: ${stClass}}`);
         });
 
             let readStudent = fs.createReadStream('student.txt', 'utf8');
