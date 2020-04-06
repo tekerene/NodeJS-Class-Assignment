@@ -1,0 +1,18 @@
+{
+  "name": "registration",
+  "version": "1.0.0",
+  "description": "a registration page",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "teke rene",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.7-alpha.1",
+    "formidable": "^1.2.2",
+    "nodemon": "^2.0.2"
+  }
+}
