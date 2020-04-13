@@ -8,9 +8,11 @@ const filePath = "student.txt";
 var http = require('http');
 var eventEmitter = require('./events');
 var upload = require("express-fileupload");
+var createBackup = require('./backup/backup');
 //var router = express.Router();
 app.use(express.static('./public'));
 app.use(upload());
+
 
  
     // READING THE STUDENT TEXT FILE(Assyn)
@@ -26,36 +28,103 @@ app.use(upload());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({entended: false}));
 
+        let stuData = [];
     // REGISTER STUDENT
-        eventEmitter.emit("register", "student.txt");
+    
+    
+        //console.log(geStu.toString());
+        app.get('/reg', (req, res)=> {
+            let stName = req.body.name;
+            let geStu = fs.readFile('student.txt', 'utf8', (err, data)=>{
+        if(err){
+            throw err;
+
+        } else  {
+            res.end(geStu);
+            console.log(data);
+        }
+            });
+         
+           
+            console.log(stName);
+        });
+        var stuList = [];
+        eventEmitter.emit("register", 'student.txt');
         app.post('/register',  (req, res) => {
     // register form
-      
-        let stName = req.body.firstName;
+            
+       let stName = req.body.firstName;
         let stAge = req.body.age;
         let stClass = req.body.class;
-        let studentInfo = fs.writeFileSync(filePath, ` Student Info: NAME: ${stName} AGE: ${stAge} CLASS: ${stClass}`);
-        console.log(`Student ""Info: NAME: ${stName} AGE: ${stAge} CLASS: ${stClass}`)
-       res.end(`new student created
-       Student Info:
-       { NAME: ${stName} AGE: ${stAge} CLASS: ${stClass}}`);
-        });
+        let stSpeciality = req.body.speciality;
+        let stAddress = req.body.address;
+        let stImage = req.body.filename;
+       
+        let studentInfo = fs.writeFileSync(stName+".txt", ` Student Info: NAME: ${stName}, AGE: ${stAge}, CLASS: ${stClass}, Speciality: ${stSpeciality}, Address: ${stAddress}, IMAGE: ${stImage}`);
+        console.log(`Student Info:  NAME: ${stName}, AGE: ${stAge}, CLASS: ${stClass}, Speciality: ${stSpeciality}, Address: ${stAddress}, IMAGE: ${stImage}`);
+            stuList.push(studentInfo);
+     //BACKING UP THE STUDENT FILE FROM BACKUP.JS
 
+        console.log('student file successfully backup');
+
+          
+         
+
+        // OUTPUTTING THE STUDENT DATA BACT TO THE BROSWER
+         res.send( `<p>new student created </p>
+         <h1>Student Info:</h1>
+         <table>
+         <thead>
+         <tr>
+         <th>Student's Name</th>
+         <th>Student's Age</th>
+         <th>Student'sClass</>
+         <th>Speciality</>
+         <th>Address</>
+         <th>Picture ID</th>
+         <th></th>
+         <th></th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr>
+         <td>${stName}</td>
+         <td>${stAge}</td>
+         <td>${stClass}</td>
+         <td>${stSpeciality}</td>
+         <td>${stAddress}</td>
+         <td>${stImage}</td>
+         </tr>
+         </tbody>
+         </table>
+         `);
+       });
+       
             let readStudent = fs.createReadStream('student.txt', 'utf8');
             readStudent.on("data", (data)=>{
-            console.log(data);
-            });
-    
+              });
+              
+    //TRYING TO USE THE LOG FILE
+
+             app.post('/log', (data, err)=>{
+              if(req.body){
+            console.log('log fail');
+            
+            } else {
+            res.end(`studentc${stName} created`);
+            }
+        });
        
- //File Upload
- app.get("/upload-image", (req, res)=>{
-     res.sentFile(__dirname+"/public/index.html");
- })
- app.post('/upload-image',  (req, res) => {
-     if(req.files){
-         var file = req.files.filename,
-         filename = file.name;
-         file.mv("../images/"+filename,function(err){
+ //IMAGE Upload
+        app.get("/upload-image", (req, res)=>{
+        res.send(__dirname+"/public/images");
+        });
+
+        app.post('/upload-image',  (req, res) => {
+        if(req.files){
+        var file = req.files.filename,
+        filename = file.name;
+        file.mv("../images/"+filename,function(err){
              if(err){
                  console.log(err)
                  res.send("error occured");
@@ -64,8 +133,8 @@ app.use(upload());
                  res.send('uploaded successfully');
              }
          })
-     }
-        // var form = new formidable.IncomingForm();
+         }
+         //var form = new formidable.IncomingForm();
         // form.parse(req, function (err, field, files) {
         //     res.write('file uploaded');
         //     res.end();

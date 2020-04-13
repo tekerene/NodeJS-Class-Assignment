@@ -1,0 +1,1 @@
+ Student Info: NAME: tekerene, AGE: 33, CLASS: two, Speciality: web develoment, Address: douala, IMAGE: undefined
